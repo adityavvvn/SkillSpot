@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { useReactToPrint } from 'react-to-print';
 import { useLocation } from 'react-router-dom';
 import { Download, Share2, FileText, Eye, Loader } from 'lucide-react';
@@ -20,22 +20,7 @@ const ResumeExport = () => {
     content: () => componentRef.current,
   });
 
-  // Fetch user data on component mount, when user changes, and when location changes
-  useEffect(() => {
-    fetchUserData();
-  }, [user?._id, location.pathname]);
-
-  // Refresh data when user returns to this tab/window
-  useEffect(() => {
-    const handleFocus = () => {
-      fetchUserData();
-    };
-
-    window.addEventListener('focus', handleFocus);
-    return () => window.removeEventListener('focus', handleFocus);
-  }, []);
-
-  const fetchUserData = async () => {
+  const fetchUserData = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
@@ -47,7 +32,7 @@ const ResumeExport = () => {
 
       setSkills(skillsRes.data.data);
       setProjects(projectsRes.data.data);
-      
+
       // Generate public link
       if (user?._id) {
         setPublicLink(`${window.location.origin}/portfolio/${user._id}`);
@@ -58,7 +43,22 @@ const ResumeExport = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user?._id]);
+
+  // Fetch user data on component mount, when user changes, and when location changes
+  useEffect(() => {
+    fetchUserData();
+  }, [fetchUserData, location.pathname]);
+
+  // Refresh data when user returns to this tab/window
+  useEffect(() => {
+    const handleFocus = () => {
+      fetchUserData();
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, [fetchUserData]);
 
   // Prepare user data for resume
   const userData = {
@@ -93,7 +93,7 @@ const ResumeExport = () => {
             Generate and share your professional resume with real data from your profile.
           </p>
         </div>
-        <button 
+        <button
           onClick={fetchUserData}
           disabled={loading}
           className="btn-secondary flex items-center gap-2 disabled:opacity-50 w-full sm:w-auto"
@@ -127,7 +127,7 @@ const ResumeExport = () => {
             <div className="ml-3">
               <h3 className="text-sm font-medium text-red-800">Error loading data</h3>
               <div className="mt-2 text-sm text-red-700">{error}</div>
-              <button 
+              <button
                 onClick={fetchUserData}
                 className="mt-2 text-sm text-red-800 hover:text-red-900 underline"
               >
@@ -152,7 +152,7 @@ const ResumeExport = () => {
               </p>
             </div>
           </div>
-          <button 
+          <button
             onClick={handleDownload}
             disabled={loading || error}
             className="btn-primary w-full flex items-center justify-center gap-2 disabled:opacity-50"
@@ -174,7 +174,7 @@ const ResumeExport = () => {
               </p>
             </div>
           </div>
-          <button 
+          <button
             onClick={handleCreatePublicLink}
             disabled={loading || error || !publicLink}
             className="btn-primary w-full flex items-center justify-center gap-2 disabled:opacity-50"
@@ -216,7 +216,7 @@ const ResumeExport = () => {
         <div className="card">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-4">
             <h2 className="text-xl font-semibold text-gray-900">Resume Preview</h2>
-            <button 
+            <button
               onClick={handlePrint}
               className="btn-secondary flex items-center gap-2 w-full sm:w-auto"
             >
@@ -238,7 +238,7 @@ const ResumeExport = () => {
                 </p>
               </div>
             ) : (
-              <ResumePDF 
+              <ResumePDF
                 ref={componentRef}
                 userData={userData}
                 skills={skills}
@@ -258,7 +258,7 @@ const ResumeExport = () => {
               <p className="text-sm text-gray-600 mb-1">Share this link with potential employers:</p>
               <p className="font-mono text-xs sm:text-sm bg-white p-2 rounded border break-all">{publicLink}</p>
             </div>
-            <button 
+            <button
               onClick={handleCreatePublicLink}
               className="btn-secondary text-sm w-full sm:w-auto"
             >
@@ -280,7 +280,7 @@ const ResumeExport = () => {
                 <p className="text-sm text-gray-500">Ready for export</p>
               </div>
             </div>
-            <button 
+            <button
               onClick={handleDownload}
               className="btn-secondary text-sm"
             >
@@ -296,7 +296,7 @@ const ResumeExport = () => {
                   <p className="text-sm text-gray-500">Share with employers</p>
                 </div>
               </div>
-              <button 
+              <button
                 onClick={handleCreatePublicLink}
                 className="btn-secondary text-sm"
               >

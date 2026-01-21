@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Mail, Lock, Eye, EyeOff, BarChart3 } from 'lucide-react';
+import { Mail, Lock, BarChart3 } from 'lucide-react';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  
+
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -19,13 +19,13 @@ const Login = () => {
     setLoading(true);
 
     const result = await login(email, password);
-    
+
     if (result.success) {
       navigate('/dashboard');
     } else {
       setError(result.message);
     }
-    
+
     setLoading(false);
   };
 
@@ -46,10 +46,14 @@ const Login = () => {
           <h1 className="text-3xl font-extrabold text-white mb-1">Welcome Back</h1>
           <p className="text-blue-100 text-sm mb-2">Login to your SkillSpot account</p>
         </div>
-        {/* ...existing login form fields/buttons... */}
-        {/* Place your login form here, styled with Tailwind (inputs, button, etc.) */}
-        {/** Example: **/}
+
         <form className="w-full space-y-6" onSubmit={handleSubmit}>
+          {error && (
+            <div className="p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200 text-sm text-center">
+              {error}
+            </div>
+          )}
+
           <div>
             <label className="block text-sm font-medium text-blue-100 mb-1">Email</label>
             <div className="relative">
@@ -78,9 +82,10 @@ const Login = () => {
           </div>
           <button
             type="submit"
-            className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold text-lg shadow-lg transition-all duration-200 transform hover:scale-105"
+            disabled={loading}
+            className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold text-lg shadow-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            Login
+            {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
         <div className="mt-6 text-blue-200 text-sm">

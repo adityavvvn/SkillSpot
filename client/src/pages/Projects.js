@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { Plus, Clock, Edit, Trash2 } from 'lucide-react';
 import ProjectTimeline from '../components/ProjectTimeline';
-import { useAuth } from '../context/AuthContext';
+
 import api from '../utils/api';
 
 const Projects = () => {
-  const { user } = useAuth();
+
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
-  const [form, setForm] = useState({ 
-    title: '', 
-    description: '', 
-    tags: [], 
-    startDate: '', 
-    endDate: '', 
-    link: '', 
-    image: '' 
+  const [form, setForm] = useState({
+    title: '',
+    description: '',
+    tags: [],
+    startDate: '',
+    endDate: '',
+    link: '',
+    image: ''
   });
   const [adding, setAdding] = useState(false);
   const [deleting, setDeleting] = useState(null);
@@ -50,14 +50,14 @@ const Projects = () => {
       const res = await api.post('/api/projects', form);
       setProjects((prev) => [...prev, res.data.data]);
       setShowForm(false);
-      setForm({ 
-        title: '', 
-        description: '', 
-        tags: [], 
-        startDate: '', 
-        endDate: '', 
-        link: '', 
-        image: '' 
+      setForm({
+        title: '',
+        description: '',
+        tags: [],
+        startDate: '',
+        endDate: '',
+        link: '',
+        image: ''
       });
     } catch (err) {
       setError('Failed to add project');
@@ -73,19 +73,19 @@ const Projects = () => {
     setError('');
     try {
       const res = await api.put(`/api/projects/${editingProject._id}`, form);
-      setProjects((prev) => prev.map(project => 
+      setProjects((prev) => prev.map(project =>
         project._id === editingProject._id ? res.data.data : project
       ));
       setShowForm(false);
       setEditingProject(null);
-      setForm({ 
-        title: '', 
-        description: '', 
-        tags: [], 
-        startDate: '', 
-        endDate: '', 
-        link: '', 
-        image: '' 
+      setForm({
+        title: '',
+        description: '',
+        tags: [],
+        startDate: '',
+        endDate: '',
+        link: '',
+        image: ''
       });
     } catch (err) {
       setError('Failed to update project');
@@ -97,7 +97,7 @@ const Projects = () => {
   // Delete project
   const handleDeleteProject = async (projectId) => {
     if (!window.confirm('Are you sure you want to delete this project?')) return;
-    
+
     setDeleting(projectId);
     setError('');
     try {
@@ -129,14 +129,14 @@ const Projects = () => {
   const closeForm = () => {
     setShowForm(false);
     setEditingProject(null);
-    setForm({ 
-      title: '', 
-      description: '', 
-      tags: [], 
-      startDate: '', 
-      endDate: '', 
-      link: '', 
-      image: '' 
+    setForm({
+      title: '',
+      description: '',
+      tags: [],
+      startDate: '',
+      endDate: '',
+      link: '',
+      image: ''
     });
     setError('');
   };
@@ -274,7 +274,7 @@ const Projects = () => {
               <div className="ml-3">
                 <h3 className="text-sm font-medium text-red-800">Error loading projects</h3>
                 <div className="mt-2 text-sm text-red-700">{error}</div>
-                <button 
+                <button
                   onClick={fetchProjects}
                   className="mt-2 text-sm text-red-800 hover:text-red-900 underline"
                 >

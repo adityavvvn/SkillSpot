@@ -52,7 +52,7 @@ const EnhancedSkillGraph = ({ data = [], width = 800, height = 400, isResume = f
       // Show empty state
       const svg = d3.select(ref.current);
       svg.selectAll('*').remove();
-      
+
       svg.append('text')
         .attr('x', containerWidth / 2)
         .attr('y', height / 2)
@@ -60,18 +60,18 @@ const EnhancedSkillGraph = ({ data = [], width = 800, height = 400, isResume = f
         .attr('font-size', isResume ? '14px' : '16px')
         .attr('fill', '#6b7280')
         .text('No skills data available. Add some skills to see the graph.');
-      
+
       return;
     }
 
     const svg = d3.select(ref.current);
     svg.selectAll('*').remove(); // Clear previous
 
-    const margin = { 
-      top: isResume ? 40 : 50, 
-      right: isResume ? 40 : 60, 
-      bottom: isResume ? 50 : 60, 
-      left: isResume ? 50 : 60 
+    const margin = {
+      top: isResume ? 40 : 50,
+      right: isResume ? 40 : 60,
+      bottom: isResume ? 50 : 60,
+      left: isResume ? 50 : 60
     };
     const innerWidth = containerWidth - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
@@ -80,7 +80,7 @@ const EnhancedSkillGraph = ({ data = [], width = 800, height = 400, isResume = f
     const skillColors = generateSkillColors(data);
 
     // Filter out skills with no proficiency data
-    const validSkills = data.filter(skill => 
+    const validSkills = data.filter(skill =>
       skill.proficiency && skill.proficiency.length > 0
     );
 
@@ -98,7 +98,7 @@ const EnhancedSkillGraph = ({ data = [], width = 800, height = 400, isResume = f
     // Flatten all dates and get date range
     const allPoints = validSkills.flatMap(d => d.proficiency);
     const allDates = allPoints.map(d => new Date(d.date));
-    
+
     // Ensure we have valid date range
     if (allDates.length === 0) {
       svg.append('text')
@@ -122,7 +122,7 @@ const EnhancedSkillGraph = ({ data = [], width = 800, height = 400, isResume = f
     const xAxis = d3.axisBottom(x)
       .ticks(Math.min(6, validSkills.length + 2))
       .tickFormat(d3.timeFormat(isResume ? '%b %Y' : '%b %Y'));
-    
+
     const yAxis = d3.axisLeft(y)
       .ticks(6)
       .tickFormat(d => isResume ? `${d}` : `Lv ${d}`);
@@ -177,7 +177,7 @@ const EnhancedSkillGraph = ({ data = [], width = 800, height = 400, isResume = f
 
     // Create gradients for each skill
     const defs = svg.append('defs');
-    
+
     validSkills.forEach(skill => {
       const gradient = defs.append('linearGradient')
         .attr('id', `gradient-${skill.skill.replace(/\s+/g, '-')}`)
@@ -202,7 +202,7 @@ const EnhancedSkillGraph = ({ data = [], width = 800, height = 400, isResume = f
       if (!skill.proficiency || skill.proficiency.length === 0) return;
 
       // Sort proficiency by date
-      const sortedProficiency = [...skill.proficiency].sort((a, b) => 
+      const sortedProficiency = [...skill.proficiency].sort((a, b) =>
         new Date(a.date) - new Date(b.date)
       );
 
@@ -249,22 +249,22 @@ const EnhancedSkillGraph = ({ data = [], width = 800, height = 400, isResume = f
         .attr('stroke-width', isResume ? 1.5 : 2)
         .style('cursor', 'pointer')
         .style('filter', isResume ? 'drop-shadow(0 1px 2px rgba(0,0,0,0.2))' : 'none')
-        .on('mouseover', function(event, d) {
+        .on('mouseover', function (event, d) {
           if (!isResume) {
             d3.select(this).attr('r', 8);
-            
+
             // Show enhanced tooltip
             const tooltip = svg.append('g')
               .attr('class', 'tooltip')
               .attr('transform', `translate(${event.pageX - ref.current.getBoundingClientRect().left + 10}, ${event.pageY - ref.current.getBoundingClientRect().top - 10})`);
-            
+
             tooltip.append('rect')
               .attr('width', 140)
               .attr('height', 70)
               .attr('fill', '#1f2937')
               .attr('rx', 6)
               .style('filter', 'drop-shadow(0 4px 6px rgba(0,0,0,0.1))');
-            
+
             tooltip.append('text')
               .attr('x', 8)
               .attr('y', 20)
@@ -272,14 +272,14 @@ const EnhancedSkillGraph = ({ data = [], width = 800, height = 400, isResume = f
               .attr('font-size', 12)
               .attr('font-weight', '600')
               .text(skill.skill);
-            
+
             tooltip.append('text')
               .attr('x', 8)
               .attr('y', 35)
               .attr('fill', '#d1d5db')
               .attr('font-size', 11)
               .text(`Level: ${d.level}/5`);
-            
+
             tooltip.append('text')
               .attr('x', 8)
               .attr('y', 50)
@@ -298,7 +298,7 @@ const EnhancedSkillGraph = ({ data = [], width = 800, height = 400, isResume = f
             }
           }
         })
-        .on('mouseout', function() {
+        .on('mouseout', function () {
           if (!isResume) {
             d3.select(this).attr('r', 6);
             svg.selectAll('.tooltip').remove();
@@ -309,11 +309,11 @@ const EnhancedSkillGraph = ({ data = [], width = 800, height = 400, isResume = f
     // Enhanced legend
     const legend = svg.append('g')
       .attr('transform', `translate(${margin.left}, ${isResume ? 5 : 10})`);
-    
+
     validSkills.forEach((skill, i) => {
       const legendItem = legend.append('g')
         .attr('transform', `translate(${i * (isResume ? 120 : 140)}, 0)`);
-      
+
       legendItem.append('circle')
         .attr('cx', 0)
         .attr('cy', 0)
@@ -321,7 +321,7 @@ const EnhancedSkillGraph = ({ data = [], width = 800, height = 400, isResume = f
         .attr('fill', skillColors[skill.skill])
         .attr('stroke', '#fff')
         .attr('stroke-width', isResume ? 1 : 1.5);
-      
+
       legendItem.append('text')
         .attr('x', isResume ? 8 : 12)
         .attr('y', isResume ? 2 : 4)
@@ -342,7 +342,7 @@ const EnhancedSkillGraph = ({ data = [], width = 800, height = 400, isResume = f
       }
     });
 
-  }, [data, containerWidth, height, isResume]);
+  }, [data, containerWidth, height, isResume, width]);
 
   return (
     <div className={`w-full ${isResume ? 'overflow-visible' : 'overflow-x-auto'}`}>

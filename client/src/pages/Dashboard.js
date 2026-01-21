@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { 
-  TrendingUp, 
-  Code, 
-  FolderOpen, 
+import React, { useEffect, useState, useCallback } from 'react';
+import {
+  TrendingUp,
+  Code,
+  FolderOpen,
   Briefcase,
   Plus,
   ArrowRight,
@@ -66,11 +66,31 @@ const Dashboard = () => {
   const [error, setError] = useState('');
   const [skillGaps, setSkillGaps] = useState([]);
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
+  const calculateSkillGaps = (skills) => {
+    const jobRequirements = jobRequirementsData['Full Stack Developer'];
+    const gaps = [];
 
-  const fetchDashboardData = async () => {
+    jobRequirements.forEach(req => {
+      const userSkill = skills.find(s => s.skill.toLowerCase() === req.skill.toLowerCase());
+      const userLevel = userSkill && userSkill.proficiency && userSkill.proficiency.length > 0
+        ? userSkill.proficiency[userSkill.proficiency.length - 1].level
+        : 0;
+
+      const gap = Math.max(0, req.required - userLevel);
+      if (gap > 0) {
+        gaps.push({
+          skill: req.skill,
+          gap: gap,
+          required: req.required,
+          current: userLevel
+        });
+      }
+    });
+
+    return gaps.sort((a, b) => b.gap - a.gap);
+  };
+
+  const fetchDashboardData = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
@@ -82,14 +102,14 @@ const Dashboard = () => {
 
       const skills = skillsRes.data.data;
       const projectsCount = projectsRes.data.data.length;
-      
+
       // Calculate skill gaps
       const gaps = calculateSkillGaps(skills);
       setSkillGaps(gaps);
-      
+
       // Calculate skill growth (simplified - could be enhanced with historical data)
       const skillGrowth = skills.length > 0 ? '+15%' : '0%';
-      
+
       // Calculate changes (simplified - could be enhanced with date filtering)
       const skillsChange = skills.length > 0 ? `+${Math.min(skills.length, 3)} this month` : 'No skills yet';
       const projectsChange = projectsCount > 0 ? `+${Math.min(projectsCount, 2)} this week` : 'No projects yet';
@@ -135,31 +155,11 @@ const Dashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const calculateSkillGaps = (skills) => {
-    const jobRequirements = jobRequirementsData['Full Stack Developer'];
-    const gaps = [];
-
-    jobRequirements.forEach(req => {
-      const userSkill = skills.find(s => s.skill.toLowerCase() === req.skill.toLowerCase());
-      const userLevel = userSkill && userSkill.proficiency && userSkill.proficiency.length > 0 
-        ? userSkill.proficiency[userSkill.proficiency.length - 1].level 
-        : 0;
-      
-      const gap = Math.max(0, req.required - userLevel);
-      if (gap > 0) {
-        gaps.push({
-          skill: req.skill,
-          gap: gap,
-          required: req.required,
-          current: userLevel
-        });
-      }
-    });
-
-    return gaps.sort((a, b) => b.gap - a.gap);
-  };
+  useEffect(() => {
+    fetchDashboardData();
+  }, [fetchDashboardData]);
 
   const handleQuickAction = (action) => {
     switch (action) {
@@ -217,7 +217,7 @@ const Dashboard = () => {
             <div className="ml-3">
               <h3 className="text-sm font-medium text-red-800">Error loading dashboard</h3>
               <div className="mt-2 text-sm text-red-700">{error}</div>
-              <button 
+              <button
                 onClick={fetchDashboardData}
                 className="mt-2 text-sm text-red-800 hover:text-red-900 underline"
               >
@@ -232,7 +232,7 @@ const Dashboard = () => {
       <div>
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div 
+          <div
             className="card hover:shadow-md transition-shadow cursor-pointer"
             onClick={() => handleQuickAction('add-skill')}
           >
@@ -251,7 +251,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div 
+          <div
             className="card hover:shadow-md transition-shadow cursor-pointer"
             onClick={() => handleQuickAction('add-project')}
           >
@@ -270,7 +270,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div 
+          <div
             className="card hover:shadow-md transition-shadow cursor-pointer"
             onClick={() => handleQuickAction('view-jobs')}
           >

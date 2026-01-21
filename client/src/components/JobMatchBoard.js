@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Briefcase, Star, MapPin, DollarSign, Filter } from 'lucide-react';
 import axios from 'axios';
 
@@ -12,7 +12,7 @@ const JobMatchBoard = ({ userId = 'demo-user' }) => {
   // const [page, setPage] = useState(1);
 
   // Replace with your Jooble API key
-  const JOOBLE_API_KEY = 'ba5421c6-08ce-46b3-b2af-0753e899f81c';
+  // const JOOBLE_API_KEY = 'ba5421c6-08ce-46b3-b2af-0753e899f81c';
 
   useEffect(() => {
     // Fetch user skills
@@ -29,7 +29,7 @@ const JobMatchBoard = ({ userId = 'demo-user' }) => {
   }, []);
 
   // Add a function to fetch jobs (so it can be called on refresh)
-  const fetchJoobleJobs = async () => {
+  const fetchJoobleJobs = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -95,12 +95,12 @@ const JobMatchBoard = ({ userId = 'demo-user' }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userSkills]);
 
   // Fetch jobs when userSkills change
   useEffect(() => {
     fetchJoobleJobs(); // Always fetch first page
-  }, [userSkills]);
+  }, [fetchJoobleJobs]);
 
   const getMatchColor = (score) => {
     if (score >= 80) return 'text-green-600 bg-green-50';
@@ -108,11 +108,11 @@ const JobMatchBoard = ({ userId = 'demo-user' }) => {
     return 'text-red-600 bg-red-50';
   };
 
-  const getMatchLabel = (score) => {
-    if (score >= 80) return 'High Match';
-    if (score >= 60) return 'Medium Match';
-    return 'Low Match';
-  };
+  // const getMatchLabel = (score) => {
+  //   if (score >= 80) return 'High Match';
+  //   if (score >= 60) return 'Medium Match';
+  //   return 'Low Match';
+  // };
 
   const filteredJobs = jobs.filter(job => {
     if (filter === 'all') return true;
@@ -167,11 +167,10 @@ const JobMatchBoard = ({ userId = 'demo-user' }) => {
             <button
               key={key}
               onClick={() => setFilter(key)}
-              className={`px-3 py-1 text-sm rounded-lg transition-colors ${
-                filter === key
-                  ? 'bg-blue-100 text-blue-700'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
+              className={`px-3 py-1 text-sm rounded-lg transition-colors ${filter === key
+                ? 'bg-blue-100 text-blue-700'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
             >
               {label}
             </button>
@@ -224,11 +223,10 @@ const JobMatchBoard = ({ userId = 'demo-user' }) => {
                   {job.tags.map((tag) => (
                     <span
                       key={tag}
-                      className={`px-2 py-1 text-xs rounded-full ${
-                        job.matchedTags.includes(tag)
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-gray-100 text-gray-600'
-                      }`}
+                      className={`px-2 py-1 text-xs rounded-full ${job.matchedTags.includes(tag)
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-gray-100 text-gray-600'
+                        }`}
                     >
                       {tag}
                     </span>

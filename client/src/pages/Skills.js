@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import EnhancedSkillGraph from '../components/EnhancedSkillGraph';
-import { useAuth } from '../context/AuthContext';
+
 import api from '../utils/api';
 
 // Color palette for different skills
@@ -30,14 +30,14 @@ const generateSkillColors = (skills) => {
 };
 
 const Skills = () => {
-  const { user } = useAuth();
+
   const [skills, setSkills] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editingSkill, setEditingSkill] = useState(null);
-  const [form, setForm] = useState({ 
-    skill: '', 
+  const [form, setForm] = useState({
+    skill: '',
     proficiency: [{ date: '', level: 1 }],
     certificates: []
   });
@@ -68,18 +68,18 @@ const Skills = () => {
   // Add new skill
   const handleAddSkill = async (e) => {
     e.preventDefault();
-    
+
     // Validate form
     if (!form.skill.trim()) {
       setError('Skill name is required');
       return;
     }
-    
+
     if (!form.proficiency || form.proficiency.length === 0) {
       setError('At least one proficiency entry is required');
       return;
     }
-    
+
     // Validate proficiency entries
     for (let i = 0; i < form.proficiency.length; i++) {
       const prof = form.proficiency[i];
@@ -88,7 +88,7 @@ const Skills = () => {
         return;
       }
     }
-    
+
     setAdding(true);
     setError('');
     try {
@@ -109,7 +109,7 @@ const Skills = () => {
           description: cert.description?.trim() || null
         }))
       };
-      
+
       const res = await api.post('/api/skills', skillData);
       setSkills((prev) => [...prev, res.data.data]);
       setShowForm(false);
@@ -125,18 +125,18 @@ const Skills = () => {
   // Edit skill
   const handleEditSkill = async (e) => {
     e.preventDefault();
-    
+
     // Validate form
     if (!form.skill.trim()) {
       setError('Skill name is required');
       return;
     }
-    
+
     if (!form.proficiency || form.proficiency.length === 0) {
       setError('At least one proficiency entry is required');
       return;
     }
-    
+
     // Validate proficiency entries
     for (let i = 0; i < form.proficiency.length; i++) {
       const prof = form.proficiency[i];
@@ -145,7 +145,7 @@ const Skills = () => {
         return;
       }
     }
-    
+
     setAdding(true);
     setError('');
     try {
@@ -166,9 +166,9 @@ const Skills = () => {
           description: cert.description?.trim() || null
         }))
       };
-      
+
       const res = await api.put(`/api/skills/${editingSkill._id}`, skillData);
-      setSkills((prev) => prev.map(skill => 
+      setSkills((prev) => prev.map(skill =>
         skill._id === editingSkill._id ? res.data.data : skill
       ));
       setShowForm(false);
@@ -185,7 +185,7 @@ const Skills = () => {
   // Delete skill
   const handleDeleteSkill = async (skillId) => {
     if (!window.confirm('Are you sure you want to delete this skill?')) return;
-    
+
     setDeleting(skillId);
     setError('');
     try {
@@ -200,8 +200,8 @@ const Skills = () => {
 
   // Reset form to initial state
   const resetForm = () => {
-    setForm({ 
-      skill: '', 
+    setForm({
+      skill: '',
       proficiency: [{ date: '', level: 1 }],
       certificates: []
     });
@@ -220,8 +220,8 @@ const Skills = () => {
     setEditingSkill(skill);
     setForm({
       skill: skill.skill,
-      proficiency: skill.proficiency && skill.proficiency.length > 0 
-        ? skill.proficiency 
+      proficiency: skill.proficiency && skill.proficiency.length > 0
+        ? skill.proficiency
         : [{ date: '', level: 1 }],
       certificates: skill.certificates || []
     });
@@ -245,9 +245,9 @@ const Skills = () => {
   };
 
   const addProficiencyRow = () => {
-    setForm((prev) => ({ 
-      ...prev, 
-      proficiency: [...(prev.proficiency || []), { date: '', level: 1 }] 
+    setForm((prev) => ({
+      ...prev,
+      proficiency: [...(prev.proficiency || []), { date: '', level: 1 }]
     }));
   };
 
@@ -272,17 +272,17 @@ const Skills = () => {
   };
 
   const addCertificateRow = () => {
-    setForm((prev) => ({ 
-      ...prev, 
-      certificates: [...(prev.certificates || []), { 
-        name: '', 
-        issuer: '', 
-        issueDate: '', 
-        expiryDate: '', 
-        credentialId: '', 
-        credentialUrl: '', 
-        description: '' 
-      }] 
+    setForm((prev) => ({
+      ...prev,
+      certificates: [...(prev.certificates || []), {
+        name: '',
+        issuer: '',
+        issueDate: '',
+        expiryDate: '',
+        credentialId: '',
+        credentialUrl: '',
+        description: ''
+      }]
     }));
   };
 
@@ -360,7 +360,7 @@ const Skills = () => {
                 + Add Row
               </button>
             </div>
-            
+
             {/* Certificates Section */}
             <div className="mb-4">
               <label className="block text-sm font-medium mb-1">Certificates & Credentials</label>
@@ -435,7 +435,7 @@ const Skills = () => {
                 + Add Certificate
               </button>
             </div>
-            
+
             <button type="submit" className="btn-primary w-full" disabled={adding}>
               {adding ? (editingSkill ? 'Updating...' : 'Adding...') : (editingSkill ? 'Update Skill' : 'Add Skill')}
             </button>
@@ -473,7 +473,7 @@ const Skills = () => {
               <div className="ml-3">
                 <h3 className="text-sm font-medium text-red-800">Error loading skills</h3>
                 <div className="mt-2 text-sm text-red-700">{error}</div>
-                <button 
+                <button
                   onClick={fetchSkills}
                   className="mt-2 text-sm text-red-800 hover:text-red-900 underline"
                 >
@@ -495,14 +495,14 @@ const Skills = () => {
               </div>
             )}
             {skills.map((skill) => (
-              <div 
-                key={skill._id} 
+              <div
+                key={skill._id}
                 className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors border-l-4"
                 style={{ borderLeftColor: skillColors[skill.skill] }}
               >
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
-                    <div 
+                    <div
                       className="w-3 h-3 rounded-full"
                       style={{ backgroundColor: skillColors[skill.skill] }}
                     ></div>
@@ -513,16 +513,16 @@ const Skills = () => {
                     {skill.proficiency.length > 0 && (
                       <div className="flex items-center gap-2">
                         <div className="flex-1 bg-gray-200 rounded-full h-2">
-                          <div 
+                          <div
                             className="h-2 rounded-full transition-all duration-300"
-                            style={{ 
-                              width: `${(skill.proficiency[skill.proficiency.length-1].level / 5) * 100}%`,
+                            style={{
+                              width: `${(skill.proficiency[skill.proficiency.length - 1].level / 5) * 100}%`,
                               backgroundColor: skillColors[skill.skill]
                             }}
                           ></div>
                         </div>
                         <span className="text-xs text-gray-500 w-8 text-right">
-                          {skill.proficiency[skill.proficiency.length-1].level}/5
+                          {skill.proficiency[skill.proficiency.length - 1].level}/5
                         </span>
                       </div>
                     )}
@@ -550,10 +550,10 @@ const Skills = () => {
                 <div className="flex items-center gap-4">
                   <div className="text-right">
                     <div className="text-sm font-medium text-gray-900">
-                      {skill.proficiency.length > 0 ? `Lv ${skill.proficiency[skill.proficiency.length-1].level}` : 'N/A'}
+                      {skill.proficiency.length > 0 ? `Lv ${skill.proficiency[skill.proficiency.length - 1].level}` : 'N/A'}
                     </div>
                     <div className="text-xs text-gray-500">
-                      {skill.proficiency.length > 0 ? `Updated ${new Date(skill.proficiency[skill.proficiency.length-1].date).toLocaleDateString()}` : ''}
+                      {skill.proficiency.length > 0 ? `Updated ${new Date(skill.proficiency[skill.proficiency.length - 1].date).toLocaleDateString()}` : ''}
                     </div>
                   </div>
                   <div className="flex gap-2">

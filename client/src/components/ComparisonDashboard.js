@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import * as d3 from 'd3';
-import { useAuth } from '../context/AuthContext';
+
 import api from '../utils/api';
 
 // Sample job requirements for different roles
@@ -49,7 +49,7 @@ const jobRequirementsData = {
 
 const ComparisonDashboard = () => {
   const ref = useRef();
-  const { user } = useAuth();
+
   const [userSkills, setUserSkills] = useState([]);
   const [jobRequirements, setJobRequirements] = useState([]);
   const [selectedRole, setSelectedRole] = useState('Full Stack Developer');
@@ -72,19 +72,19 @@ const ComparisonDashboard = () => {
     try {
       const res = await api.get('/api/skills');
       const skills = res.data.data;
-      
+
       // Convert skills to the format expected by the comparison
       const formattedSkills = skills.map(skill => {
-        const latestProficiency = skill.proficiency && skill.proficiency.length > 0 
+        const latestProficiency = skill.proficiency && skill.proficiency.length > 0
           ? skill.proficiency[skill.proficiency.length - 1]
           : { level: 0 };
-        
+
         return {
           skill: skill.skill,
           level: latestProficiency.level || 0
         };
       });
-      
+
       setUserSkills(formattedSkills);
     } catch (err) {
       setError('Failed to load skills');
@@ -96,7 +96,7 @@ const ComparisonDashboard = () => {
 
   useEffect(() => {
     if (!userSkills || !jobRequirements || userSkills.length === 0) return;
-    
+
     const svg = d3.select(ref.current);
     svg.selectAll('*').remove();
 
@@ -174,7 +174,7 @@ const ComparisonDashboard = () => {
     // Legend
     const legend = svg.append('g')
       .attr('transform', `translate(${margin.left},10)`);
-    
+
     legend.append('rect')
       .attr('x', 0)
       .attr('y', 0)
@@ -203,7 +203,7 @@ const ComparisonDashboard = () => {
 
     // Match percentage
     const avgMatch = Math.round(comparisonData.reduce((sum, d) => sum + d.match, 0) / comparisonData.length);
-    
+
     legend.append('text')
       .attr('x', 250)
       .attr('y', 12)
@@ -256,7 +256,7 @@ const ComparisonDashboard = () => {
               <div className="ml-3">
                 <h3 className="text-sm font-medium text-red-800">Error loading comparison</h3>
                 <div className="mt-2 text-sm text-red-700">{error}</div>
-                <button 
+                <button
                   onClick={fetchUserSkills}
                   className="mt-2 text-sm text-red-800 hover:text-red-900 underline"
                 >
@@ -286,7 +286,7 @@ const ComparisonDashboard = () => {
             ))}
           </select>
         </div>
-        
+
         {userSkills.length === 0 ? (
           <div className="text-center py-8">
             <div className="text-gray-400 mb-2">
