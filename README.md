@@ -278,12 +278,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - React community for excellent documentation
 - MongoDB for database solution
 
-## 📞 Support
-
-For support and questions:
-- Create an issue on GitHub
-- Email: your-email@example.com
-- Documentation: [Wiki](link-to-wiki)
 
 ## 🆕 Recent Updates
 
