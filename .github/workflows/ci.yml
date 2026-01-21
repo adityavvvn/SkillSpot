@@ -50,7 +50,7 @@ jobs:
     - name: Test Client
       run: |
         cd client
-        npm test -- --watchAll=false --passWithNoTests
+        npx react-scripts test --watchAll=false --passWithNoTests
 
     - name: Build Client
       run: |
