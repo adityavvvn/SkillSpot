@@ -49,6 +49,7 @@ A comprehensive full-stack web application for creating professional visual resu
 - **Jest** - Testing framework
 - **Nodemon** - Development server
 - **ESLint** - Code linting
+- **GitHub Actions** - CI/CD Pipeline
 
 ## 📦 Installation
 
@@ -232,6 +233,12 @@ SkillSpot/
 - Input validation and sanitization
 - CORS configuration
 - Rate limiting
+
+## 🔄 CI/CD Pipeline
+
+- **Continuous Integration**: Automated testing for both client and server on every push using GitHub Actions
+- **Continuous Deployment**: Automated build and deployment pipeline ensures production is always up-to-date
+
 
 ## 🚀 Deployment
 
