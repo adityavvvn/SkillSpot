@@ -4,6 +4,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
@@ -33,8 +34,8 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/skillplot
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => console.log('✅ MongoDB connected successfully'))
-.catch(err => console.error('❌ MongoDB connection error:', err));
+  .then(() => console.log('✅ MongoDB connected successfully'))
+  .catch(err => console.error('❌ MongoDB connection error:', err));
 
 // Basic route
 app.get('/', (req, res) => {
@@ -67,7 +68,17 @@ app.use((err, req, res, next) => {
   });
 });
 
-// 404 handler
+// Serve static assets in production
+if (process.env.NODE_ENV === 'production') {
+  // Set static folder
+  app.use(express.static(path.join(__dirname, '../client/build')));
+
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));
+  });
+}
+
+// 404 handler (Only hits if not in production or if previous routes fall through and it's not a GET request caught above)
 app.use('*', (req, res) => {
   res.status(404).json({
     success: false,
