@@ -30,10 +30,10 @@ jobs:
           if [ -f "package-lock.json" ]; then npm ci; else npm install; fi
 
       - name: Client - Run Tests
-        # CI=true forces react-scripts test to run in non-watch mode
+        # --watchAll=false forces react-scripts test to run in non-watch mode
         run: |
           cd client
-          CI=true npm test -- --passWithNoTests
+          npm test -- --passWithNoTests --watchAll=false
 
       # Server Tests
       - name: Server - Install Dependencies

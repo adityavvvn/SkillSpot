@@ -9,7 +9,7 @@
     "client": "cd client && npm start",
     "install-all": "npm install && cd server && npm install && cd ../client && npm install",
     "build": "cd client && npm run build",
-    "test": "concurrently \"cd server && npm test -- --passWithNoTests\" \"cd client && CI=true npm test -- --passWithNoTests\""
+    "test": "concurrently \"cd server && npm test -- --passWithNoTests\" \"cd client && npm test -- --passWithNoTests --watchAll=false\""
   },
   "keywords": [
     "resume",

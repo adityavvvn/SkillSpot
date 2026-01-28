@@ -42,7 +42,7 @@ jobs:
           CI: true
         run: |
           cd server && npm test -- --passWithNoTests
-          cd ../client && CI=true npm test -- --passWithNoTests
+          cd ../client && npm test -- --passWithNoTests --watchAll=false
 
       - name: Build client
         run: npm run build
