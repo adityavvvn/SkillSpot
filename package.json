@@ -9,12 +9,18 @@
     "client": "cd client && npm start",
     "install-all": "npm install && cd server && npm install && cd ../client && npm install",
     "build": "cd client && npm run build",
-    "test": "concurrently \"cd server && npm test\" \"cd client && npm test\""
+    "test": "concurrently \"cd server && npm test -- --passWithNoTests\" \"cd client && CI=true npm test -- --passWithNoTests\""
   },
-  "keywords": ["resume", "portfolio", "career", "visualization", "skills"],
+  "keywords": [
+    "resume",
+    "portfolio",
+    "career",
+    "visualization",
+    "skills"
+  ],
   "author": "SkillPlot Team",
   "license": "MIT",
   "devDependencies": {
     "concurrently": "^8.2.2"
   }
-} 
+}

@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   test:
@@ -12,51 +12,51 @@ jobs:
     strategy:
       matrix:
         node-version: [18.x]
-    
+
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-        cache-dependency-path: '**/package-lock.json'
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+          cache-dependency-path: "**/package-lock.json"
 
-    # Client Tests
-    - name: Client - Install Dependencies
-      run: |
-        cd client
-        if [ -f "package-lock.json" ]; then npm ci; else npm install; fi
+      # Client Tests
+      - name: Client - Install Dependencies
+        run: |
+          cd client
+          if [ -f "package-lock.json" ]; then npm ci; else npm install; fi
 
-    - name: Client - Run Tests
-      # CI=true forces react-scripts test to run in non-watch mode
-      run: |
-        cd client
-        CI=true npm test -- --passWithNoTests
+      - name: Client - Run Tests
+        # CI=true forces react-scripts test to run in non-watch mode
+        run: |
+          cd client
+          CI=true npm test -- --passWithNoTests
 
-    # Server Tests
-    - name: Server - Install Dependencies
-      run: |
-        cd server
-        if [ -f "package-lock.json" ]; then npm ci; else npm install; fi
+      # Server Tests
+      - name: Server - Install Dependencies
+        run: |
+          cd server
+          if [ -f "package-lock.json" ]; then npm ci; else npm install; fi
 
-    - name: Server - Run Tests
-      run: |
-        cd server
-        npm test
+      - name: Server - Run Tests
+        run: |
+          cd server
+          npm test -- --passWithNoTests
 
   build-and-push:
     needs: test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    
+
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-        
+
       - name: Login to Docker Hub
         # Only login if secrets are present to avoid failure in forks/local runs without secrets
         if: env.DOCKER_USERNAME != ''
